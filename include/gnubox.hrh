@@ -1,0 +1,67 @@
+//
+// GNUBOX.HRH
+// 28th August 2002
+//
+// Copyright: Mal Minhas
+//
+// Description:
+//   Main resource file for GNUBOX app
+//
+
+#ifndef GNUBOX_HRH
+#define GNUBOX_HRH
+
+enum TGnuboxCommandIds {
+  EGnuboxCmdAppDirect = 1,
+  EGnuboxCmdAppDialup,
+  EGnuboxCmdAppCSD_GPRS,
+  EGnuboxCmdAppInfraredDirect,
+  EGnuboxCmdAppBluetoothDirectSer,
+  EGnuboxCmdAppBluetoothDirectLan,
+  EGnuboxCmdAppBluetoothDirectDun,
+  //    EGnuboxCmdAppInfraredDialup,
+  //    EGnuboxCmdAppBluetoothDialup,
+  EGnuboxCmdAppDebug,
+  EGnuboxCmdAppDumpCommDb,
+  EGnuboxCmdAppDumpCommDbNew,
+  EGnuboxCmdAppSetModemID,
+  EGnuboxCmdAppDumpInfo,
+  EGnuboxCmdAddMRouterDefRoute,
+  EGnuboxCmdAppSetModemD2,
+  EGnuboxCmdAppSetModemD6,
+  EGnuboxCmdAppSetModemP2,
+  EGnuboxCmdAppSetModemP6,
+  EGnuboxCmdAppUnsetModemID,
+  EGnuboxCmdAppBluetoothDirectMR,
+  EGnuboxCmdAppCableDirect,
+  EGnuboxCmdAppDumpCommInfo,
+  EGnuboxCmdAppAddRecords,
+  EGnuboxCmdAppCommTest,
+  EGnuboxCmdAppDelRecords,
+  EGnuboxCmdAppCommPref,
+  EGnuboxCmdAppStartConn,
+  EGnuboxCmdAppInstall,
+  EGnuboxCmdAppSetupScript,
+  EGnuboxCmdAppWriteModemInit,
+  EGnuboxCmdAppFixupModemEntry,
+  EGnuboxCmdAppChangeConnPref,
+  EGnuboxCmdAppDumpAppInfo,
+  EGnuboxCmdAppSetGPRS,
+  EGnuboxCmdAppCopyFromGPRS,
+  EGnuboxCmdDumpProcInfo,
+  EGnuboxCmdAppSetTelNo,
+  EGnuboxCmdAppRevertConnPref
+};
+
+
+//controls
+enum {
+     EControlWarningDialogLabel,
+     EControlWarningDialogLabel2,
+     ETotalNumberOfControls
+}; 
+
+#define EDialogControlIdText 0x1100
+
+
+#endif      // GNUBOX_HRH

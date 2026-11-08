@@ -1,0 +1,11 @@
+//
+// bld.inf - S60 3rd Edition FP2 build file for GnuBox (vetera-bridge edition)
+//
+
+PRJ_PLATFORMS
+WINSCW
+GCCE
+ARMV5
+
+PRJ_MMPFILES
+gnubox.mmp

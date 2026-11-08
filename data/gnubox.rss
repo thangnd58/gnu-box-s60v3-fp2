@@ -1,0 +1,311 @@
+//
+// gnubox.rss
+//
+// 28th August 2002
+// Copyright Mal Minhas
+//
+// Description:
+//	 Gnubox app resource file
+//
+
+//  RESOURCE IDENTIFIER
+NAME    TBOX // 4 letter ID
+
+//  INCLUDES
+
+#include <eikon.rh>
+#include <uikon.rh>
+#include <eikcore.rsg>
+#include "gnubox.hrh"
+
+#ifdef __SERIES60__
+#include <avkon.rh>
+#include <avkon.rsg>
+#include <avkon.mbg>
+#include <appinfo.rh>
+#endif
+
+//  CONSTANTS  
+
+//  MACROS
+
+//  RESOURCE DEFINITIONS 
+
+RESOURCE RSS_SIGNATURE { }
+
+RESOURCE TBUF { buf="gnubox"; }
+
+RESOURCE EIK_APP_INFO
+{
+  hotkeys=r_gnubox_hotkeys;
+  menubar=r_gnubox_menubar;
+#ifdef __SERIES60__
+  cba=R_AVKON_SOFTKEYS_OPTIONS_BACK;
+#endif
+}
+
+RESOURCE HOTKEYS r_gnubox_hotkeys
+{
+  control=
+    {
+#ifdef __SERIES60__
+      HOTKEY { command=EAknCmdExit; key='e'; }
+#else //UIQ
+      HOTKEY { command=EEikCmdExit; key='e'; }
+#endif
+    };
+}
+
+RESOURCE MENU_BAR r_gnubox_menubar
+{
+  titles=
+    {
+      MENU_TITLE { menu_pane=r_gnubox_menu; txt="Options"; }
+    };
+}
+
+RESOURCE MENU_PANE r_gnubox_menu
+{
+  items=
+    {
+      MENU_ITEM 
+      {
+        command=EGnuboxCmdAppDirect;txt="2box Bluetooth";
+        cascade=r_gnubox_bluetooth_submenu;
+      },
+      MENU_ITEM 
+      {
+        command=EGnuboxCmdAppInfraredDirect;txt="2box Infrared";
+      },
+      MENU_ITEM 
+      {
+        command=EGnuboxCmdAppCableDirect;txt="2box Cable";
+      },
+      MENU_ITEM { command=EGnuboxCmdAppCSD_GPRS; txt="1box Phone"; },
+      MENU_ITEM 
+      {
+        command=EGnuboxCmdAppInstall;txt="Install";
+        cascade=r_gnubox_install_submenu;
+      },
+      MENU_ITEM 
+      {
+        command=EGnuboxCmdAppDebug;txt="Debug";
+        cascade=r_gnubox_debug_submenu;
+      },
+      /*      MENU_ITEM 
+              //THIS WORKS BUT TOO DANGEROUS => COMMENTED OUT
+              //it sets ModemForDataAndFax and ModemForPhoneServicesAndSms to
+              //values 2 or 6, but this is hardcoded. 
+              //If you have a setting anything else than 2 or 6 then
+              //clicking on any item here is irreversible.
+      {
+        command=EGnuboxCmdAppDebug;txt="Manually set modem ID";
+        cascade=r_gnubox_modemid_submenu;
+        },*/
+      MENU_ITEM { command=EEikCmdExit; txt="Exit"; }
+    };
+}
+
+
+RESOURCE MENU_PANE r_gnubox_bluetooth_submenu
+{
+  items=
+    {
+      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectMR; txt="Auto"; },
+      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectSer; txt="Serial port"; },
+      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectLan; txt="LAN Access server"; },
+      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectDun; txt="Dial-up networking"; }
+    };
+}
+
+RESOURCE MENU_PANE r_gnubox_install_submenu
+{
+  items=
+    {
+      MENU_ITEM { command=EGnuboxCmdAppSetupScript; txt="set RAS login script"; },
+#ifdef ENABLESETMODEMID
+      MENU_ITEM { command=EGnuboxCmdAppSetModemID; txt="auto set modem ID"; },
+      MENU_ITEM { command=EGnuboxCmdAppUnsetModemID; txt="auto unset modem ID"; },
+#endif
+      MENU_ITEM { command=EGnuboxCmdAppAddRecords; txt="create records"; },
+      MENU_ITEM { command=EGnuboxCmdAppDelRecords; txt="delete records"; }
+#ifdef ENABLEGPRSCOPY
+      ,
+      MENU_ITEM { command=EGnuboxCmdAppSetGPRS; txt="set to GPRS"; },
+      MENU_ITEM { command=EGnuboxCmdAppCopyFromGPRS; txt="copy settings from GPRS"; },
+      MENU_ITEM { command=EGnuboxCmdAppChangeConnPref; txt="set default AP to Bt"; },
+      MENU_ITEM { command=EGnuboxCmdAppRevertConnPref; txt="set default AP to GPRS"; }
+#endif
+#ifdef ENABLESETTELNO
+      ,
+      MENU_ITEM { command=EGnuboxCmdAppSetTelNo; txt="set tel.no";}
+#endif
+    };
+}
+
+RESOURCE MENU_PANE r_gnubox_debug_submenu
+{
+  items=
+    {
+      MENU_ITEM {command=EGnuboxCmdAppDumpInfo; txt="Dump IF info"; },
+      MENU_ITEM {command=EGnuboxCmdAppStartConn; txt="Bring up IF"; },
+      /*MENU_ITEM {command=EGnuboxCmdAppDumpCommDb; txt="Dump CommsDB"; },*/
+      MENU_ITEM {command=EGnuboxCmdAppDumpCommDbNew; txt="Dump Full CommsDB"; },
+      MENU_ITEM {command=EGnuboxCmdAddMRouterDefRoute; txt="use mRouter"; },
+      MENU_ITEM {command=EGnuboxCmdAppCommTest; txt="Test comm channel"; },
+      MENU_ITEM {command=EGnuboxCmdAppCommPref; txt="Dump ConnPref"; },
+#ifdef MODEMINIT
+      MENU_ITEM {command=EGnuboxCmdAppWriteModemInit; txt="Set modem init string"; },
+#endif
+      MENU_ITEM {command=EGnuboxCmdAppDumpCommInfo; txt="dump comm info"; },
+      //      MENU_ITEM {command=EGnuboxCmdAppFixupModemEntry; txt="fixup modem entry"; }
+      MENU_ITEM {command=EGnuboxCmdAppDumpAppInfo; txt="dump app list"; },
+      MENU_ITEM {command=EGnuboxCmdDumpProcInfo; txt="dump proc list"; }
+
+    };
+}
+
+RESOURCE MENU_PANE r_gnubox_modemid_submenu
+{
+  items=
+    {
+      MENU_ITEM {command=EGnuboxCmdAppSetModemD2; txt="Data modem=2"; },
+      MENU_ITEM {command=EGnuboxCmdAppSetModemD6; txt="Data modem=6"; },
+      MENU_ITEM {command=EGnuboxCmdAppSetModemP2; txt="Phone modem=2"; },
+      MENU_ITEM {command=EGnuboxCmdAppSetModemP6; txt="Phone modem=6"; }
+    };
+}
+
+#ifdef __SERIES60__
+RESOURCE DIALOG r_gnubox_encrypt_confirm_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_YES_NO;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_CONFIRMATION_QUERY
+                {
+                layout = EConfirmationQueryLayout;
+                label = "Do you want to require encryption?";
+                };
+            }
+        };
+    }
+
+
+//
+RESOURCE DIALOG r_dialog_telnum_query
+    {
+    flags = EGeneralQueryFlags;
+    buttons = R_AVKON_SOFTKEYS_OK_CANCEL;
+    items =
+        {
+        DLG_LINE
+            {
+            type = EAknCtQuery;
+            id = EGeneralQuery;
+            control = AVKON_DATA_QUERY
+                {
+                layout = EDataLayout;
+                label = "Enter phone number:";
+                control = EDWIN
+                    {
+                    maxlength = 20;
+                    default_input_mode = EAknEditorNumericInputMode;
+                    };
+                };
+            }
+        };
+    }
+
+#endif
+
+#ifdef __UIQ__
+
+RESOURCE DIALOG r_dialog_telnum_query
+        {
+        buttons=R_EIK_BUTTONS_CANCEL_OK;
+        flags=EEikDialogFlagWait;
+        items=
+                {
+                DLG_LINE
+                        {
+                        type=EEikCtEdwin;
+                        prompt="Enter phone number:";
+                        id=EDialogControlIdText;
+                        control=EDWIN {width=100;maxlength=20;};
+                        }
+                };
+        }
+#endif
+
+#define PROMPT "The Accesspoint is now set to GPRS mode. You can now edit the accesspoint in the phone settings. You will be unable to use it until you click Install->createrecords in gnubox, which will re-set it to Data call (and thus hide it)."
+
+
+#define PROMPT2 "Once you have finished editing the accesspoint, you will also want to click Install->Copy GPRS settings to get the modifications copied."
+
+#if 1
+
+RESOURCE DIALOG r_gnubox_gprscopy_warning {
+#ifdef __SERIES60__
+  flags = EGeneralQueryFlags;
+  buttons = R_AVKON_SOFTKEYS_OK_EMPTY; 
+  title = "Warning";
+  items = {
+    DLG_LINE {
+      type = EAknCtMessageQuery;
+      id = EControlWarningDialogLabel;
+      control = AVKON_MESSAGE_QUERY {
+        message = PROMPT;
+      };
+    },
+    DLG_LINE {
+      type = EAknCtMessageQuery;
+      id = EControlWarningDialogLabel2;
+      control = AVKON_MESSAGE_QUERY {
+        message = PROMPT2;
+      };
+    }
+  };
+#else 
+  flags = EEikDialogFlagWait;
+  buttons = R_EIK_BUTTONS_CONTINUE;
+  title = "Warning";
+  items = {
+    DLG_LINE {
+      type = EEikCtLabel; 
+      id = EControlWarningDialogLabel;  
+      control = LABEL {
+        txt = PROMPT;
+      };
+    },
+    DLG_LINE {
+      type = EEikCtLabel; 
+      id = EControlWarningDialogLabel2;  
+      control = LABEL {
+        txt = PROMPT2;
+      };
+    }
+
+  };
+#endif
+}
+#endif
+
+#ifdef __SERIES60__
+RESOURCE LOCALISABLE_APP_INFO r_gnubox_localisable_app_info
+{
+  short_caption = "GnuBox";
+  caption_and_icon = CAPTION_AND_ICON_INFO
+  {
+    caption = "GnuBox";
+    number_of_icons = 1;
+    icon_file = "\\resource\\apps\\gnubox.mbm";
+  };
+}
+#endif
+

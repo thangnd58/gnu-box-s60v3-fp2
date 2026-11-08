@@ -1,0 +1,22 @@
+;
+; Installation file for GnuBox Application (S60v3 FP2 / vetera-bridge)
+;Language - standard language definitions
+&EN
+
+; standard SIS file header
+#{"GnuBox"},(0xE97764F0),1,0,0, TYPE=SA
+
+;Localised Vendor name
+%{"GnuBox-EN"}
+
+;Unique Vendor name
+:"GnuBox"
+
+;Supports S60 v 3.0
+[0x101F7961], 0, 0, 0, {"S60ProductID"}
+
+;Files to install
+"gnubox.exe"		-"!:\sys\bin\gnubox.exe"
+"gnubox.rsc"		-"!:\resource\apps\gnubox.rsc"
+"gnubox_reg.rsc"	-"!:\private\10003a3f\import\apps\gnubox_reg.rsc"
+"..\data\gnubox.mbm"	-"!:\resource\apps\gnubox.mbm"

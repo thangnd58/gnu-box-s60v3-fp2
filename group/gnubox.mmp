@@ -1,0 +1,71 @@
+//
+// gnubox.mmp - S60 3rd Edition FP2 project specification for GnuBox (vetera-bridge edition)
+//
+
+TARGET          gnubox.exe
+TARGETTYPE      exe
+UID             0x100039ce 0xE97764F0
+CAPABILITY      ReadDeviceData WriteDeviceData NetworkServices LocalServices ReadUserData WriteUserData
+EPOCSTACKSIZE   0x5000
+
+MACRO           __SERIES60__
+MACRO           SERIES60
+MACRO           __VEND_NOKIA__
+MACRO           __SY80__
+MACRO           __S60ED2FP2__
+MACRO           ENABLESETMODEMID
+MACRO           ENABLEGPRSCOPY
+MACRO           ENABLESETTELNO
+MACRO           MODEMINIT
+
+SOURCEPATH      ..\src
+SOURCE          gnuboxApp.cpp
+SOURCE          gnuboxAppUi.cpp
+SOURCE          gnuboxDocument.cpp
+SOURCE          gnuboxContainer.cpp
+SOURCE          gnuboxAOLoader.cpp
+SOURCE          gnuboxAOBTRegister.cpp
+SOURCE          gnuboxPhone.cpp
+SOURCE          cdb.cpp
+SOURCE          routedump.cpp
+
+SOURCEPATH      ..\data
+
+START RESOURCE  gnubox.rss
+HEADER
+TARGETPATH      \resource\apps
+LANG            SC
+END
+
+START RESOURCE  gnubox_reg.rss
+TARGETPATH      \private\10003a3f\apps
+LANG            SC
+END
+
+USERINCLUDE     . ..\include
+SYSTEMINCLUDE   . \epoc32\include
+
+LIBRARY         euser.lib
+LIBRARY         apparc.lib
+LIBRARY         cone.lib
+LIBRARY         eikcore.lib
+LIBRARY         eikcoctl.lib
+LIBRARY         avkon.lib
+LIBRARY         eikctl.lib
+LIBRARY         eikdlg.lib
+LIBRARY         estor.lib
+LIBRARY         gdi.lib
+LIBRARY         flogger.lib
+LIBRARY         commdb.lib
+LIBRARY         commsdat.lib
+LIBRARY         efsrv.lib
+LIBRARY         btextnotifiers.lib
+LIBRARY         btmanclient.lib
+LIBRARY         bluetooth.lib
+LIBRARY         esock.lib
+LIBRARY         insock.lib
+LIBRARY         charconv.lib
+LIBRARY         c32.lib
+LIBRARY         bafl.lib
+LIBRARY         edbms.lib
+LIBRARY         apgrfx.lib

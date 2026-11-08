@@ -1,0 +1,25 @@
+# Symbian OS build artifacts
+*.o
+*.obj
+*.map
+*.rsg
+*.mbc
+*.log
+*.bak
+*.tmp
+*.intermediate
+*.dep
+.cvsignore
+
+# Build directories
+EPOC32/
+BUILD/
+epoc32/
+build/
+
+# Unsigned intermediate packages
+sis/*.sis
+
+# OS metadata
+.DS_Store
+Thumbs.db
