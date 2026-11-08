@@ -149,6 +149,7 @@ private: // Functions from base classes
   RSocketServ iSockServ;          ///< Persistent socket server for active connection
   RConnection iConn;              ///< Persistent network connection interface
   TBool iConnected;               ///< Flag whether connection is currently held open
+  TBuf<64> iStatusMsg;            ///< Live status line for UI display
 };
 
 

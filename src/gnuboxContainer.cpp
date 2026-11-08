@@ -25,6 +25,7 @@
 #include <avkon.hrh>
 #include <AknQueryDialog.h>
 #include <aknnotewrappers.h>
+#include <aknutils.h>
 #include <gnubox.rsg>
 #endif
 
@@ -264,25 +265,19 @@ void CGnuboxContainer::ConstructL(const TRect& aRect, CGnuboxAppUi* aParent)
 
   iConnected = EFalse;
   iParent = aParent;
+  iStatusMsg.Copy(_L("[--] Ready (Idle)"));
 
   // This will add further text but it might take time so
   // we've hived it off to a separate active object...
   iLoader = CGnuboxAOLoader::NewL(this);
-  //This will do the user interaction wait for bluetooth device selection
 #ifdef BTSELECTAO
   iBTRegister = CGnuboxAOBTRegister::NewL(this);
-#else
-  //no more need due to the UIQ BT device dialog is synchronous
-  //maybe re-enable it for series 60 backport
 #endif
   iLabel = new (ELeave) CEikLabel;
   iLabel->SetContainerWindowL(*this);
-
-  // Set up the screen text with whatever the default bearer is...
-  SetAndDrawScreenTextL(iParent->GetMode());  // MALM
+  iLabel->MakeVisible(EFalse);
 
   SetRect(aRect);
-
   ActivateL();
 }
 
@@ -309,11 +304,12 @@ void CGnuboxContainer::SizeChanged()
   /**
      CGnuboxContainer::SizeChanged()
      Called by framework when the view size is changed.
-     @TODO: Add control resize code etc here needed to resize label properly
   */
 {
   FLOG(_L("CGnuboxContainer::SizeChanged"));
-  iLabel->SetExtent(TPoint(10,5),iLabel->MinimumSize());
+  if (iLabel) {
+    iLabel->SetExtent(TPoint(0,0), TSize(0,0));
+  }
 }
 
 TInt CGnuboxContainer::CountComponentControls() const
@@ -521,68 +517,188 @@ void CGnuboxContainer::SwitchModeL(const TCfgEntry * aBearer)
 void CGnuboxContainer::DrawControls(const TRect& aRect) const
   /**
      CGnuboxContainer::DrawControls() const
-     Main point at which AppUi controls are drawn
-     Note that for 7650 width=176 and height=144
-     @TODO: Need to scale the drawing of controls.
+     Compact, crisp drawing of controls for 320x240 and 240x320 S60v3 FP2 screens.
   */
 {
   CWindowGc& gc = SystemGc();
+  
+  // Clean dark theme background - Deep slate-navy
+  TRgb bgColor(18, 24, 38);
   gc.SetPenStyle(CGraphicsContext::ENullPen);
-  gc.SetBrushColor(iParent->GetMode()->iColor);
+  gc.SetBrushColor(bgColor);
   gc.SetBrushStyle(CGraphicsContext::ESolidBrush);
   gc.DrawRect(aRect);
-  // Now we can draw screen elements
-  //TPoint startpoint(0,iH*KHeightScalingFactor*3/5-40);
-  TPoint startpoint(KXOffset,20);
-  //TPoint endpoint(iW*KWidthScalingFactor,iH*KHeightScalingFactor*3/5-40);
-  TPoint endpoint((KWidth-KXOffset),20);
+
+  const CFont* font = LatinPlain12();
+  if (!font) {
+    font = iCoeEnv->NormalFont();
+  }
+  const CFont* boldFont = LatinBold12();
+  if (!boldFont) {
+    boldFont = font;
+  }
+
+  TInt fh = font->HeightInPixels();
+  TInt fa = font->AscentInPixels();
+  TInt lineStep = fh + 2; // ~14px per line
+  if (lineStep < 13) {
+    lineStep = 13;
+  }
+
+  // 1. Top Title Bar (compact 20px)
+  TInt headerH = 20;
+  TRect headerRect(0, 0, aRect.Width(), headerH);
+  gc.SetBrushColor(TRgb(30, 41, 59)); // Slate 800
+  gc.DrawRect(headerRect);
+
+  // Header bottom border
   gc.SetPenStyle(CGraphicsContext::ESolidPen);
-  TSize penSizeThicker(1,1);
-  gc.SetPenSize(penSizeThicker);
-  gc.SetPenColor(KRgbBlack);
-  gc.DrawLine(startpoint,endpoint);
+  gc.SetPenColor(TRgb(71, 85, 105)); // Slate 600
+  gc.DrawLine(TPoint(0, headerH), TPoint(aRect.Width(), headerH));
 
-  //TFontSpec fs(_L("Arial"),20*7); // 9pt Arial
-  TFontSpec fs(_L("Arial"),20*4); // 8pt Arial
-  //TFontSpec fs(_L("Arial"),20*11); // 11pt Arial
-  //TFontSpec fs(_L("Arial"),20*24); // 24pt Arial
-  fs.iFontStyle=
-    TFontStyle(EPostureUpright,EStrokeWeightNormal,EPrintPosNormal);
-  CFont* fontUsed=ControlEnv()->CreateScreenFontL(fs);
-  gc.UseFont(fontUsed);
+  // Header Title with bold font
+  gc.UseFont(boldFont);
+  gc.SetPenColor(KRgbWhite);
+  _LIT(KTitle, "GnuBox - Vetera Bridge");
+  gc.DrawText(KTitle, TPoint(6, (headerH - boldFont->HeightInPixels()) / 2 + boldFont->AscentInPixels()));
+  gc.DiscardFont();
 
-  TRect textRect(KXOffset,23,(KWidth-KXOffset),KHeight);
-  gc.DrawRect(textRect); // just to see our limits...
+  // Header Tag (right aligned)
+  gc.UseFont(font);
+  _LIT(KTag, "v3 FP2");
+  TInt tagW = font->TextWidthInPixels(KTag);
+  if (aRect.Width() > 180) {
+    gc.SetPenColor(TRgb(148, 163, 184)); // Slate 400
+    gc.DrawText(KTag, TPoint(aRect.Width() - tagW - 6, (headerH - fh) / 2 + fa));
+  }
 
-  // Now draw the lines of text - you must do this per redraw
-  for(TInt count = 0; count < iTextLines.Count(); count++)
-    gc.DrawText(iTextLines[count],TPoint(KTextOffset,35+(count*KLineGap)));
+  // 2. Card 1: Connection & Settings
+  TInt margin = 4;
+  TInt card1Y = headerH + 3;
+  TInt card1H = lineStep * 4 + 6;
+  TRect card1(margin, card1Y, aRect.Width() - margin, card1Y + card1H);
+
+  gc.SetBrushColor(TRgb(30, 41, 59));
+  gc.SetPenColor(TRgb(51, 65, 85));
+  gc.DrawRect(card1);
+
+  TInt textX = margin + 6;
+  TInt curY = card1Y + 3 + fa;
+
+  // Row 1: Status
+  gc.SetPenColor(TRgb(148, 163, 184));
+  _LIT(KLblStatus, "Status: ");
+  gc.DrawText(KLblStatus, TPoint(textX, curY));
+  TInt sw = font->TextWidthInPixels(KLblStatus);
+
+  if (iConnected) {
+    gc.SetPenColor(TRgb(34, 197, 94)); // Bright Green
+    _LIT(KValConnected, "[ON] CONNECTED (PPP UP)");
+    gc.DrawText(KValConnected, TPoint(textX + sw, curY));
+  } else if (iStatusMsg.Length() > 0) {
+    if (iStatusMsg.Find(_L("[ERR]")) >= 0) {
+      gc.SetPenColor(TRgb(239, 68, 68)); // Red
+    } else if (iStatusMsg.Find(_L("[OK]")) >= 0) {
+      gc.SetPenColor(TRgb(34, 197, 94)); // Green
+    } else {
+      gc.SetPenColor(TRgb(56, 189, 248)); // Cyan
+    }
+    gc.DrawText(iStatusMsg, TPoint(textX + sw, curY));
+  } else {
+    gc.SetPenColor(TRgb(56, 189, 248)); // Sky Blue
+    _LIT(KValIdle, "[--] Ready (Idle)");
+    gc.DrawText(KValIdle, TPoint(textX + sw, curY));
+  }
+
+  // Row 2: AP Name
+  curY += lineStep;
+  gc.SetPenColor(TRgb(148, 163, 184));
+  _LIT(KLblAP, "AP Name: ");
+  gc.DrawText(KLblAP, TPoint(textX, curY));
+  sw = font->TextWidthInPixels(KLblAP);
+  gc.SetPenColor(KRgbWhite);
+  _LIT(KValAP, "Bt (WCDMA GPRS)");
+  gc.DrawText(KValAP, TPoint(textX + sw, curY));
+
+  // Row 3: Modem Port
+  curY += lineStep;
+  gc.SetPenColor(TRgb(148, 163, 184));
+  _LIT(KLblModem, "Modem: ");
+  gc.DrawText(KLblModem, TPoint(textX, curY));
+  sw = font->TextWidthInPixels(KLblModem);
+  gc.SetPenColor(KRgbWhite);
+  _LIT(KValModem, "BTCOMM::5 (115200 8N1)");
+  gc.DrawText(KValModem, TPoint(textX + sw, curY));
+
+  // Row 4: Gateway
+  curY += lineStep;
+  gc.SetPenColor(TRgb(148, 163, 184));
+  _LIT(KLblGW, "Gateway: ");
+  gc.DrawText(KLblGW, TPoint(textX, curY));
+  sw = font->TextWidthInPixels(KLblGW);
+  gc.SetPenColor(KRgbWhite);
+  _LIT(KValGW, "192.168.7.1 (ESP32)");
+  gc.DrawText(KValGW, TPoint(textX + sw, curY));
+
+  // 3. Card 2: Quick Guide
+  TInt card2Y = card1Y + card1H + 4;
+  TInt card2H = lineStep * 5 + 6;
+  if (card2Y + card2H <= aRect.Height() || aRect.Height() - card2Y >= lineStep * 3) {
+    TInt actualCard2Bottom = card2Y + card2H;
+    if (actualCard2Bottom > aRect.Height() - 2) {
+      actualCard2Bottom = aRect.Height() - 2;
+    }
+    TRect card2(margin, card2Y, aRect.Width() - margin, actualCard2Bottom);
+    gc.SetBrushColor(TRgb(24, 30, 42));
+    gc.SetPenColor(TRgb(51, 65, 85));
+    gc.DrawRect(card2);
+
+    TInt guideY = card2Y + 3 + fa;
+    gc.DiscardFont();
+    gc.UseFont(boldFont);
+    gc.SetPenColor(TRgb(250, 204, 21)); // Gold/Yellow
+    _LIT(KGuideHdr, "Quick Guide:");
+    gc.DrawText(KGuideHdr, TPoint(textX, guideY));
+    gc.DiscardFont();
+    gc.UseFont(font);
+
+    gc.SetPenColor(TRgb(203, 213, 225)); // Light Slate
+    if (guideY + lineStep < actualCard2Bottom) {
+      guideY += lineStep;
+      _LIT(KS1, "1. Options -> Create records");
+      gc.DrawText(KS1, TPoint(textX, guideY));
+    }
+    if (guideY + lineStep < actualCard2Bottom) {
+      guideY += lineStep;
+      _LIT(KS2, "2. Options -> Set to GPRS");
+      gc.DrawText(KS2, TPoint(textX, guideY));
+    }
+    if (guideY + lineStep < actualCard2Bottom) {
+      guideY += lineStep;
+      _LIT(KS3, "3. Options -> Bring up IF (test)");
+      gc.DrawText(KS3, TPoint(textX, guideY));
+    }
+    if (guideY + lineStep < actualCard2Bottom) {
+      guideY += lineStep;
+      _LIT(KS4, "4. Press Home -> Open Browser");
+      gc.DrawText(KS4, TPoint(textX, guideY));
+    }
+  }
 
   gc.DiscardFont();
-  ControlEnv()->ReleaseScreenFont(fontUsed);
-  //
   gc.SetBrushStyle(CGraphicsContext::ENullBrush);
 }
 
 void CGnuboxContainer::SetAndDrawScreenTextL(const TCfgEntry * aBearer)
   /**
      CGnubox::SetAndDrawScreenTextL(TConnectionMode aMode)
-     This function does two things:
-     1) Changes the main label text
-     2) Updates screen with new CommDb settings
-     To do the latter, it invokes the iLoader active object.
+     This function updates screen with current settings.
   */
 {
   FLOG(_L("CGnuboxContainer::SetScreenTextL"));
-  TBuf<22> txtBuf;
-  txtBuf.FillZ();
-  txtBuf = TPtrC(aBearer->iDispName);
-  txtBuf.SetMax();
-  iLabel->SetTextL(txtBuf);
-  iTextLines.Close();
-  User::LeaveIfError(iTextLines.Append(_L("Loading CommDb")));
-  User::LeaveIfError(iTextLines.Append(_L("settings...")));
-  iLoader->Fire();
+  if (IsActivated()) {
+    DrawNow();
+  }
 }
 
 void CGnuboxContainer::ReadTextFieldL(CCommsDbTableView* aTable, const TDesC& aRecord)
@@ -1306,6 +1422,8 @@ void CGnuboxContainer::SetToGPRSL() {
     note->ExecuteLD(_L("Set to GPRS OK! Access Point 'Bt' visible."));
   });
   FLOG(_L("SetToGPRSL complete: IAP 'Bt' is OUTGOING_WCDMA"));
+  iStatusMsg.Copy(_L("[OK] Set to GPRS"));
+  if (IsActivated()) DrawNow();
 }
 
 
@@ -1342,11 +1460,15 @@ void CGnuboxContainer::BringUpIfL() {
   b.Format(_L("Connecting 'Bt' (iap %d)..."), iapid);
   FLOG(b);
   INFOMSG(b);
+  iStatusMsg.Copy(_L("[..] Connecting BT..."));
+  if (IsActivated()) DrawNow();
 
   LogLeaveIfErrorL(iSockServ.Connect(), "RSocketServ open");
   TInt connErr = iConn.Open(iSockServ);
   if (connErr != KErrNone) {
     iSockServ.Close();
+    iStatusMsg.Format(_L("[ERR] sock %d"), connErr);
+    if (IsActivated()) DrawNow();
     LogLeaveIfErrorL(connErr, "RConnection open");
   }
 
@@ -1359,6 +1481,8 @@ void CGnuboxContainer::BringUpIfL() {
   if (err != KErrNone) {
     iConn.Close();
     iSockServ.Close();
+    iStatusMsg.Format(_L("[ERR] %d"), err);
+    if (IsActivated()) DrawNow();
     TBuf<100> eb;
     eb.Format(_L("Open conn: Error %d (iap %d)"), err, iapid);
     FLOG(eb);
@@ -1390,13 +1514,17 @@ void CGnuboxContainer::BringUpIfL() {
       testSock.Write(KReq, stat);
       User::WaitForRequest(stat);
       okMsg.Format(_L("PPP UP & HTTP OK! Web responded."));
+      iStatusMsg.Copy(_L("[OK] PPP UP & HTTP OK"));
     } else {
       okMsg.Format(_L("PPP UP! HTTP test err %d"), stat.Int());
+      iStatusMsg.Format(_L("[OK] PPP UP (sock %d)"), stat.Int());
     }
     testSock.Close();
   } else {
     okMsg.Format(_L("PPP UP! Socket open err %d"), sockErr);
+    iStatusMsg.Copy(_L("[OK] PPP UP!"));
   }
+  if (IsActivated()) DrawNow();
 
   FLOG(okMsg);
   INFOMSG(okMsg);
@@ -1657,6 +1785,7 @@ void CGnuboxContainer::CreateCommDbRecords() {
     CAknInformationNote* note = new (ELeave) CAknInformationNote(ETrue);
     note->ExecuteLD(_L("Records created OK!"));
   });
+  iStatusMsg.Copy(_L("[OK] Records created"));
   SetAndDrawScreenTextL(iParent->GetMode());
 }
 
@@ -1746,6 +1875,7 @@ void CGnuboxContainer::DeleteCommDbRecords() {
   CleanupStack::PopAndDestroy(dbSession);
 
   INFOMSG(_L("Done."));
+  iStatusMsg.Copy(_L("[OK] Records deleted"));
   SetAndDrawScreenTextL(iParent->GetMode());
 }
 

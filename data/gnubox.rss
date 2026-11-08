@@ -68,111 +68,11 @@ RESOURCE MENU_PANE r_gnubox_menu
 {
   items=
     {
-      MENU_ITEM 
-      {
-        command=EGnuboxCmdAppDirect;txt="2box Bluetooth";
-        cascade=r_gnubox_bluetooth_submenu;
-      },
-      MENU_ITEM 
-      {
-        command=EGnuboxCmdAppInfraredDirect;txt="2box Infrared";
-      },
-      MENU_ITEM 
-      {
-        command=EGnuboxCmdAppCableDirect;txt="2box Cable";
-      },
-      MENU_ITEM { command=EGnuboxCmdAppCSD_GPRS; txt="1box Phone"; },
-      MENU_ITEM 
-      {
-        command=EGnuboxCmdAppInstall;txt="Install";
-        cascade=r_gnubox_install_submenu;
-      },
-      MENU_ITEM 
-      {
-        command=EGnuboxCmdAppDebug;txt="Debug";
-        cascade=r_gnubox_debug_submenu;
-      },
-      /*      MENU_ITEM 
-              //THIS WORKS BUT TOO DANGEROUS => COMMENTED OUT
-              //it sets ModemForDataAndFax and ModemForPhoneServicesAndSms to
-              //values 2 or 6, but this is hardcoded. 
-              //If you have a setting anything else than 2 or 6 then
-              //clicking on any item here is irreversible.
-      {
-        command=EGnuboxCmdAppDebug;txt="Manually set modem ID";
-        cascade=r_gnubox_modemid_submenu;
-        },*/
+      MENU_ITEM { command=EGnuboxCmdAppStartConn; txt="Bring up IF"; },
+      MENU_ITEM { command=EGnuboxCmdAppAddRecords; txt="Create records"; },
+      MENU_ITEM { command=EGnuboxCmdAppSetGPRS; txt="Set to GPRS"; },
+      MENU_ITEM { command=EGnuboxCmdAppDelRecords; txt="Delete records"; },
       MENU_ITEM { command=EEikCmdExit; txt="Exit"; }
-    };
-}
-
-
-RESOURCE MENU_PANE r_gnubox_bluetooth_submenu
-{
-  items=
-    {
-      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectMR; txt="Auto"; },
-      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectSer; txt="Serial port"; },
-      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectLan; txt="LAN Access server"; },
-      MENU_ITEM {command=EGnuboxCmdAppBluetoothDirectDun; txt="Dial-up networking"; }
-    };
-}
-
-RESOURCE MENU_PANE r_gnubox_install_submenu
-{
-  items=
-    {
-      MENU_ITEM { command=EGnuboxCmdAppSetupScript; txt="set RAS login script"; },
-#ifdef ENABLESETMODEMID
-      MENU_ITEM { command=EGnuboxCmdAppSetModemID; txt="auto set modem ID"; },
-      MENU_ITEM { command=EGnuboxCmdAppUnsetModemID; txt="auto unset modem ID"; },
-#endif
-      MENU_ITEM { command=EGnuboxCmdAppAddRecords; txt="create records"; },
-      MENU_ITEM { command=EGnuboxCmdAppDelRecords; txt="delete records"; }
-#ifdef ENABLEGPRSCOPY
-      ,
-      MENU_ITEM { command=EGnuboxCmdAppSetGPRS; txt="set to GPRS"; },
-      MENU_ITEM { command=EGnuboxCmdAppCopyFromGPRS; txt="copy settings from GPRS"; },
-      MENU_ITEM { command=EGnuboxCmdAppChangeConnPref; txt="set default AP to Bt"; },
-      MENU_ITEM { command=EGnuboxCmdAppRevertConnPref; txt="set default AP to GPRS"; }
-#endif
-#ifdef ENABLESETTELNO
-      ,
-      MENU_ITEM { command=EGnuboxCmdAppSetTelNo; txt="set tel.no";}
-#endif
-    };
-}
-
-RESOURCE MENU_PANE r_gnubox_debug_submenu
-{
-  items=
-    {
-      MENU_ITEM {command=EGnuboxCmdAppDumpInfo; txt="Dump IF info"; },
-      MENU_ITEM {command=EGnuboxCmdAppStartConn; txt="Bring up IF"; },
-      /*MENU_ITEM {command=EGnuboxCmdAppDumpCommDb; txt="Dump CommsDB"; },*/
-      MENU_ITEM {command=EGnuboxCmdAppDumpCommDbNew; txt="Dump Full CommsDB"; },
-      MENU_ITEM {command=EGnuboxCmdAddMRouterDefRoute; txt="use mRouter"; },
-      MENU_ITEM {command=EGnuboxCmdAppCommTest; txt="Test comm channel"; },
-      MENU_ITEM {command=EGnuboxCmdAppCommPref; txt="Dump ConnPref"; },
-#ifdef MODEMINIT
-      MENU_ITEM {command=EGnuboxCmdAppWriteModemInit; txt="Set modem init string"; },
-#endif
-      MENU_ITEM {command=EGnuboxCmdAppDumpCommInfo; txt="dump comm info"; },
-      //      MENU_ITEM {command=EGnuboxCmdAppFixupModemEntry; txt="fixup modem entry"; }
-      MENU_ITEM {command=EGnuboxCmdAppDumpAppInfo; txt="dump app list"; },
-      MENU_ITEM {command=EGnuboxCmdDumpProcInfo; txt="dump proc list"; }
-
-    };
-}
-
-RESOURCE MENU_PANE r_gnubox_modemid_submenu
-{
-  items=
-    {
-      MENU_ITEM {command=EGnuboxCmdAppSetModemD2; txt="Data modem=2"; },
-      MENU_ITEM {command=EGnuboxCmdAppSetModemD6; txt="Data modem=6"; },
-      MENU_ITEM {command=EGnuboxCmdAppSetModemP2; txt="Phone modem=2"; },
-      MENU_ITEM {command=EGnuboxCmdAppSetModemP6; txt="Phone modem=6"; }
     };
 }
 
