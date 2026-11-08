@@ -1,4 +1,4 @@
-# GnuBox for Symbian S60 3rd Edition (FP2 / Nokia E5-00) - Vetera-Bridge Edition
+# GnuBox for Symbian S60 3rd Edition (FP2 / Nokia E5-00 / C5-00) - Vetera-Bridge Edition
 
 A modernized port of **GnuBox** for Symbian S60 3rd Edition Feature Pack 2 (specifically tested on Nokia E5-00, RM-632), customized to connect over Bluetooth Serial (RFCOMM / `BTCOMM::5`) + PPP to an ESP32 running [arifwn/vetera-bridge](https://github.com/arifwn/vetera-bridge).
 
@@ -63,7 +63,7 @@ A modernized port of **GnuBox** for Symbian S60 3rd Edition Feature Pack 2 (spec
 
 ## Usage Guide (with Dead / Inactive SIM)
 
-1. **Insert SIM:** Insert any inactive or dead SIM into the Nokia E5-00 (ensuring the phone boots in **General** profile, not Offline mode).
+1. **Insert SIM:** Insert any inactive or dead SIM into the Nokia E5-00 / C5-00 (ensuring the phone boots in **General** profile, not Offline mode).
 2. **Install:** Transfer and install `gnubox_s60v3_vetera.sisx` on the phone.
 3. **Configure CommDb:**
    - Open **GnuBox**.
@@ -72,6 +72,7 @@ A modernized port of **GnuBox** for Symbian S60 3rd Edition Feature Pack 2 (spec
 4. **Verify Access Point:**
    - Go to `Menu -> Settings -> Connectivity -> Destinations -> Internet`.
    - Verify that the access point **"Bt"** is listed.
+   - If **"Bt"** in `Uncategorised`, move to `Internet`
 5. **Connect:**
    - Power on the ESP32 running `vetera-bridge`.
    - Open the Nokia Web Browser $\rightarrow$ navigate to `http://192.168.7.1`.
