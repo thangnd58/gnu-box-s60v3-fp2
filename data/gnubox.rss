@@ -69,6 +69,7 @@ RESOURCE MENU_PANE r_gnubox_menu
   items=
     {
       MENU_ITEM { command=EGnuboxCmdAppStartConn; txt="Bring up IF"; },
+      MENU_ITEM { command=EGnuboxCmdAppBluetoothDirectSer; txt="2box Serial"; },
       MENU_ITEM { command=EGnuboxCmdAppAddRecords; txt="Create records"; },
       MENU_ITEM { command=EGnuboxCmdAppSetGPRS; txt="Set to GPRS"; },
       MENU_ITEM { command=EGnuboxCmdAppDelRecords; txt="Delete records"; },

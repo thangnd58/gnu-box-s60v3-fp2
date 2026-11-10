@@ -670,17 +670,17 @@ void CGnuboxContainer::DrawControls(const TRect& aRect) const
     }
     if (guideY + lineStep < actualCard2Bottom) {
       guideY += lineStep;
-      _LIT(KS2, "2. Options -> Set to GPRS");
+      _LIT(KS2, "2. Options -> 2box Serial (ESP32)");
       gc.DrawText(KS2, TPoint(textX, guideY));
     }
     if (guideY + lineStep < actualCard2Bottom) {
       guideY += lineStep;
-      _LIT(KS3, "3. Options -> Bring up IF (test)");
+      _LIT(KS3, "3. Options -> Set to GPRS");
       gc.DrawText(KS3, TPoint(textX, guideY));
     }
     if (guideY + lineStep < actualCard2Bottom) {
       guideY += lineStep;
-      _LIT(KS4, "4. Press Home -> Open Browser");
+      _LIT(KS4, "4. Options -> Bring up IF / Browser");
       gc.DrawText(KS4, TPoint(textX, guideY));
     }
   }
@@ -2030,6 +2030,12 @@ void CGnuboxContainer::SetupCSYL(const TBTDeviceResponseParams &resp, TUint32 aP
 #endif	
   FLOG(_L("BTCOMM CSY Configured\n"));
   INFOMSG(_L("Set BT registry here"));
+  iStatusMsg.Copy(_L("[OK] BT: "));
+  if (iDevName.Length() > 40) {
+    iStatusMsg.Append(iDevName.Left(40));
+  } else {
+    iStatusMsg.Append(iDevName);
+  }
   SetAndDrawScreenTextL(iParent->GetMode());
 }
 
