@@ -5,7 +5,7 @@ set COMPILER_PATH=
 set PATH=C:\PROGRA~2\CSLARM~1\bin;C:\Perl\bin;C:\S60\devices\S60_3rd_FP2_SDK_v1.1\epoc32\tools;C:\S60\devices\S60_3rd_FP2_SDK_v1.1\epoc32\gcc\bin;C:\PROGRA~2\COMMON~1\Symbian\tools;C:\Windows\system32;C:\Windows
 set Path=%PATH%
 
-cd /d "c:\Users\THANG\Documents\Antigravity\gnubox-s60v3-vetera\group"
+cd /d "%~dp0"
 echo === Running bldmake bldfiles ===
 call bldmake bldfiles
 if errorlevel 1 exit /b 1
@@ -36,7 +36,7 @@ if not exist "C:\S60\devices\S60_3rd_FP2_SDK_v1.1\epoc32\release\gcce\urel\gnubo
     exit /b 1
 )
 
-cd /d "c:\Users\THANG\Documents\Antigravity\gnubox-s60v3-vetera\sis"
+cd /d "%~dp0..\sis"
 copy /y "C:\S60\devices\S60_3rd_FP2_SDK_v1.1\epoc32\release\gcce\urel\gnubox.exe" "gnubox.exe"
 copy /y "C:\S60\devices\S60_3rd_FP2_SDK_v1.1\epoc32\data\z\resource\apps\gnubox.rsc" "gnubox.rsc"
 copy /y "C:\S60\devices\S60_3rd_FP2_SDK_v1.1\epoc32\data\z\private\10003a3f\apps\gnubox_reg.rsc" "gnubox_reg.rsc"

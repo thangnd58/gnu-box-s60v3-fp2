@@ -64,6 +64,8 @@ A modernized port of **GnuBox** for Symbian S60 3rd Edition Feature Pack 2 (spec
    ```
 4. The output package `gnubox_s60v3_vetera.sisx` will be generated in `sis/`.
 
+> **Note:** For a comprehensive, step-by-step guide with tool paths and troubleshooting specifically for this Windows environment, see **[BUILD_GUIDE.md](BUILD_GUIDE.md)**.
+
 ---
 
 ## Usage Guide (with Dead / Inactive SIM)
